@@ -6,6 +6,7 @@ import type {
 } from "@aniweek/shared";
 import { HttpError } from "../../lib/http";
 import { useToastStore } from "../../stores/toast";
+import { useThemeStore } from "../../stores/theme";
 import {
   calendarApi,
   type CalendarBoard,
@@ -31,6 +32,16 @@ export const useCalendarStore = defineStore("calendar", {
     error: null as string | null,
   }),
   actions: {
+    // Único ponto que atribui um board completo (vindo do backend) — mantém
+    // o tema (modo auto) seguindo a estação que o usuário está vendo, igual
+    // já fazia SharedCalendarView.vue pro calendário público. Sem isso, criar
+    // ou trocar de temporada não refletia no tema (bug reportado: criar
+    // Primavera enquanto via Verão não trocava o tema).
+    setBoard(board: CalendarBoard) {
+      this.board = board;
+      useThemeStore().setSeason(board.season);
+    },
+
     // M6 (fora do blueprint): navegação entre estações — trocar qual
     // Calendar está carregado no board sem depender da estação "atual" por
     // data. Usado pelo SwitchSeasonModal e por createSeason() logo abaixo.
@@ -38,7 +49,7 @@ export const useCalendarStore = defineStore("calendar", {
       this.loading = true;
       this.error = null;
       try {
-        this.board = await calendarApi.getOne(calendarId);
+        this.setBoard(await calendarApi.getOne(calendarId));
         rememberCalendar(calendarId);
       } catch (err) {
         this.error =
@@ -67,7 +78,7 @@ export const useCalendarStore = defineStore("calendar", {
       const lastId = localStorage.getItem(LAST_CALENDAR_KEY);
       if (lastId) {
         try {
-          this.board = await calendarApi.getOne(lastId);
+          this.setBoard(await calendarApi.getOne(lastId));
           this.loading = false;
           return;
         } catch {
@@ -76,8 +87,8 @@ export const useCalendarStore = defineStore("calendar", {
       }
 
       try {
-        this.board = await calendarApi.getCurrent();
-        rememberCalendar(this.board.id);
+        this.setBoard(await calendarApi.getCurrent());
+        rememberCalendar(this.board!.id);
       } catch (err) {
         if (err instanceof HttpError && err.status === 404) {
           // Primeira vez nesta estação: ainda não existe Calendar pra ela.
@@ -87,8 +98,8 @@ export const useCalendarStore = defineStore("calendar", {
           try {
             const { season, year } = await calendarApi.getCurrentSeason();
             await calendarApi.create({ season, year });
-            this.board = await calendarApi.getCurrent();
-            rememberCalendar(this.board.id);
+            this.setBoard(await calendarApi.getCurrent());
+            rememberCalendar(this.board!.id);
           } catch (createErr) {
             this.error =
               createErr instanceof HttpError
