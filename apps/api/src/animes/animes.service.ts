@@ -115,6 +115,7 @@ export class AnimesService {
 function toAnimeRow(dto: AnimeDto) {
   return {
     malId: dto.malId,
+    releaseDate: dto.releaseDate,
     title: dto.title,
     imageUrl: dto.imageUrl,
     synopsis: dto.synopsis,
@@ -127,6 +128,7 @@ function toAnimeRow(dto: AnimeDto) {
 function toAnimeDto(row: Anime): AnimeDto {
   return {
     malId: row.malId,
+    releaseDate: row.releaseDate ?? null,
     title: row.title,
     imageUrl: row.imageUrl,
     synopsis: row.synopsis,

@@ -1,4 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
+import { updateAnimeSchema } from '@aniweek/shared';
 import { AnimesService } from './animes.service';
 
 // Cobre a única regra não-trivial do módulo: degradação graciosa quando o
@@ -114,4 +115,67 @@ describe('AnimesService', () => {
     const filtered = await animes.getCommunityPopular('Action');
     expect(filtered.map((a) => a.title)).toEqual(['Solo Leveling']);
   });
+});
+
+describe('release date persistence', () => {
+  it('validates calendar dates and permits clearing an existing date', () => {
+    expect(
+      updateAnimeSchema.parse({ releaseDate: '2024-02-29' }).releaseDate,
+    ).toBe('2024-02-29');
+    expect(
+      updateAnimeSchema.safeParse({ releaseDate: '2023-02-29' }).success,
+    ).toBe(false);
+    expect(
+      updateAnimeSchema.safeParse({ releaseDate: '2026-13-01' }).success,
+    ).toBe(false);
+    expect(
+      updateAnimeSchema.safeParse({ releaseDate: '2026-09-30T00:00:00Z' })
+        .success,
+    ).toBe(false);
+    expect(
+      updateAnimeSchema.parse({ releaseDate: null }).releaseDate,
+    ).toBeNull();
+    expect(updateAnimeSchema.parse({})).not.toHaveProperty('releaseDate');
+  });
+  it('persists the catalog date and serves it from the local fallback', async () => {
+    const { animes, jikan, prisma } = buildAnimesService();
+    jikan.getAnimeById.mockResolvedValue({
+      malId: 1,
+      releaseDate: '2026-09-30',
+    });
+    await animes.getByMalId(1);
+    expect(prisma.anime.upsert.mock.calls).toMatchObject([
+      [
+        {
+          create: { releaseDate: '2026-09-30' },
+          update: { releaseDate: '2026-09-30' },
+        },
+      ],
+    ]);
+    prisma.anime.findUnique.mockResolvedValue({
+      malId: 1,
+      releaseDate: '2026-09-30',
+    });
+    jikan.getAnimeById.mockRejectedValue(new Error('offline'));
+    expect((await animes.getByMalId(1)).releaseDate).toBe('2026-09-30');
+  });
+  it.each(['2026-09-30', null])(
+    'saves manual date %s and protects it from refresh',
+    async (releaseDate) => {
+      const { animes, jikan, prisma } = buildAnimesService();
+      prisma.anime.findUnique.mockResolvedValue({
+        id: 'anime-1',
+        manuallyEdited: true,
+        releaseDate,
+      });
+      await animes.update('anime-1', { releaseDate });
+      expect(prisma.anime.update).toHaveBeenCalledWith({
+        where: { id: 'anime-1' },
+        data: { releaseDate, manuallyEdited: true },
+      });
+      jikan.getAnimeById.mockResolvedValue({ releaseDate: '2000-01-01' });
+      expect((await animes.getByMalId(1)).releaseDate).toBe(releaseDate);
+      expect(prisma.anime.upsert).not.toHaveBeenCalled();
+    },
+  );
 });

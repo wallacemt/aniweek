@@ -73,7 +73,7 @@ async function onSubmit() {
       <AuthTextField id="confirm-password" v-model="confirmPassword" :type="showPassword ? 'text' : 'password'"
         label="Confirmar nova senha" autocomplete="new-password" placeholder="Repita a senha" required>
         <template #trailing>
-          <button type="button" aria-label="Mostrar ou ocultar senha"
+          <button type="button" v-tooltip="'Mostrar ou ocultar senha'"
             class="text-(--ink-text-faint) hover:text-(--ink-text)" @click="showPassword = !showPassword">
             <EyeOff v-if="showPassword" class="h-4 w-4" />
             <Eye v-else class="h-4 w-4" />

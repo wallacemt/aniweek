@@ -136,6 +136,7 @@ model RefreshToken {
 model Anime {
   id             String   @id @default(cuid())
   malId          Int      @unique
+  releaseDate    String?  @db.VarChar(10) // ISO calendar date (YYYY-MM-DD), without timezone
   title          String
   imageUrl       String?
   synopsis       String?

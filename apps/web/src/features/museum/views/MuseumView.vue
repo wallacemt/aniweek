@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ReleaseDate from '../../../components/ReleaseDate.vue'
 import { computed, onMounted, ref } from 'vue'
 import { Search } from 'lucide-vue-next'
 import AppShell from '../../../components/AppShell.vue'
@@ -124,6 +125,7 @@ const TIER_FILTERS = [
             <div class="min-w-0 flex-1">
               <div class="mb-2.5 font-mono text-[11px] tracking-wide" style="color: #c4b5fd">✨ OBRA EM DESTAQUE</div>
               <div class="font-display mb-2.5 text-[24px] font-extrabold text-white">{{ featured.anime.title }}</div>
+              <ReleaseDate :date="featured.anime.releaseDate" />
               <div class="mb-4 flex flex-wrap items-center gap-4 text-[12.5px] text-(--ink-text-muted)">
                 <span v-if="featured.anime.episodes">📺 Série · {{ featured.anime.episodes }} eps</span>
                 <span>📅 Assistido em {{ watchedWhenLabel(featured) }}</span>
@@ -201,13 +203,14 @@ const TIER_FILTERS = [
                   {{ t.anime.title }}
                 </div>
               </div>
+              <ReleaseDate :date="t.anime.releaseDate" class="mx-2.75 mt-2" />
               <div class="flex items-center justify-between border-t border-white/5 px-2.75 py-2.5">
                 <span class="text-[10px] text-(--ink-text-faint)">✓ {{ watchedWhenLabel(t) }}</span>
                 <div class="flex items-center gap-1.5">
                   <span v-if="t.anime.episodes" class="text-[10px] text-(--ink-text-faint)">{{ t.anime.episodes }}
                     eps</span>
-                  <button type="button" title="Remover do museu"
-                    class="text-[10px] text-(--ink-text-faint) opacity-0 hover:text-red-400 group-hover:opacity-100"
+                  <button type="button" v-tooltip="'Remover do museu'"
+                    class="text-[10px] text-(--ink-text-faint) hover:text-red-400"
                     @click="museum.remove(t.id)">✕</button>
                 </div>
               </div>

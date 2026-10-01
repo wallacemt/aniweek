@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ReleaseDate from '../../../components/ReleaseDate.vue'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Heart, MessageCircle } from 'lucide-vue-next'
@@ -87,6 +88,7 @@ const meta = computed(() => STATUS_META[props.entry.status])
       <div class="mb-1.5 line-clamp-2 min-h-7.25 text-[11.5px] leading-tight font-bold text-(--ink-text)">
         {{ entry.anime.title }}
       </div>
+      <ReleaseDate :date="entry.anime.releaseDate" />
       <div class="mb-1.25 text-[10px] text-(--ink-text-muted)">{{ epLabel }}</div>
       <div v-if="!ongoing" class="mb-2 h-1 overflow-hidden rounded-full" style="background: rgba(255, 255, 255, 0.07)">
         <div class="h-full" :style="{ width: `${pct}%`, background: meta.bar }" />
@@ -100,14 +102,14 @@ const meta = computed(() => STATUS_META[props.entry.status])
            do ícone/texto — o card é minúsculo de propósito (grid denso), mas
            o dedo não precisa ser tão preciso quanto o cursor. -->
       <div class="mt-2 flex items-center gap-1 border-t border-white/6 pt-2" :class="!canInteract && 'opacity-50'">
-        <button type="button" :title="canInteract ? 'Reagir' : 'Entre para reagir'" :disabled="reacting"
+        <button type="button" v-tooltip="canInteract ? 'Reagir' : 'Entre para reagir'" :disabled="reacting"
           class="-m-1.5 flex items-center gap-1 p-1.5 text-[10.5px] font-semibold transition-colors disabled:opacity-60"
           :class="reacted ? 'text-red-400' : 'text-(--ink-text-faint) hover:text-red-400'"
           @click="toggleReaction">
           <Heart :size="13" :fill="reacted ? 'currentColor' : 'none'" :class="reacted && 'scale-110'" class="transition-transform" />
           {{ reactionCount }}
         </button>
-        <button type="button" :title="canInteract ? 'Comentários' : 'Entre para comentar'"
+        <button type="button" v-tooltip="canInteract ? 'Comentários' : 'Entre para comentar'"
           class="-m-1.5 flex items-center gap-1 p-1.5 text-[10.5px] font-semibold text-(--ink-text-faint) transition-colors hover:text-(--brand-secondary)"
           @click="openComments">
           <MessageCircle :size="13" />

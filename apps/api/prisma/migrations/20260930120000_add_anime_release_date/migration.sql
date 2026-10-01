@@ -1,0 +1,1 @@
+ALTER TABLE "Anime" ADD COLUMN "releaseDate" VARCHAR(10);

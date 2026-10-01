@@ -36,12 +36,12 @@ const { entry: calendarEntry, pending: savingDay, setWeekday } = useCalendarSlot
         <div class="absolute top-4 right-4 flex gap-2">
           <button type="button" class="flex h-8 w-8 items-center justify-center rounded-[9px] border"
             style="background: rgba(5, 6, 9, 0.6); border-color: rgba(255, 255, 255, 0.1)"
-            :title="expanded ? 'Recolher' : 'Expandir'" @click="expanded = !expanded">
+            v-tooltip="expanded ? 'Recolher' : 'Expandir'" @click="expanded = !expanded">
             <Minimize2 v-if="expanded" :size="15" />
             <Maximize2 v-else :size="15" />
           </button>
           <button type="button" class="flex h-8 w-8 items-center justify-center rounded-[9px] border"
-            style="background: rgba(5, 6, 9, 0.6); border-color: rgba(255, 255, 255, 0.1)" title="Fechar"
+            style="background: rgba(5, 6, 9, 0.6); border-color: rgba(255, 255, 255, 0.1)" v-tooltip="'Fechar'"
             @click="$emit('close')">
             <X :size="15" />
           </button>
@@ -100,7 +100,7 @@ const { entry: calendarEntry, pending: savingDay, setWeekday } = useCalendarSlot
                fica com o accent + check pra ficar óbvio qual está selecionado. -->
           <div class="grid grid-cols-4 gap-2">
             <button v-for="day in WEEKDAY_ORDER" :key="day" type="button" :disabled="savingDay"
-              :title="day === calendarEntry?.weekday ? `Já está em ${WEEKDAY_META[day].short}` : `Mover para ${WEEKDAY_META[day].short}`"
+              v-tooltip="day === calendarEntry?.weekday ? `Já está em ${WEEKDAY_META[day].short}` : `Mover para ${WEEKDAY_META[day].short}`"
               class="glass flex items-center justify-center gap-1 rounded-[9px] py-2.25 text-center text-xs disabled:cursor-wait disabled:opacity-60"
               :class="day === calendarEntry?.weekday ? 'text-white' : 'text-(--ink-text-faint) hover:border-white/25 hover:text-(--ink-text)'"
               :style="day === calendarEntry?.weekday

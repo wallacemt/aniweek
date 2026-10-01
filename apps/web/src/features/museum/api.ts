@@ -12,6 +12,7 @@ export interface WatchedAnimeDto {
   anime: {
     id: string
     malId: number
+    releaseDate: string | null
     title: string
     imageUrl: string | null
     episodes: number | null

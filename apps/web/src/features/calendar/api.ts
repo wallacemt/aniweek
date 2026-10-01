@@ -35,6 +35,7 @@ export interface CalendarEntryResponse {
   anime: {
     id: string
     malId: number
+    releaseDate: string | null
     title: string
     imageUrl: string | null
     linkAccess: string | null

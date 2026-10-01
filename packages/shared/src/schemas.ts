@@ -82,6 +82,7 @@ export const ANIME_GENRES = [
 // schema tipa o resultado no front, sem duplicar a interface dos dois lados.
 export const animeDtoSchema = z.object({
   malId: z.number().int().positive(),
+  releaseDate: z.iso.date().nullable().default(null),
   title: z.string(),
   imageUrl: z.string().nullable(),
   synopsis: z.string().nullable(),
@@ -226,6 +227,7 @@ export const importPreviousSchema = z.object({
 // campos opcionais — o PATCH só atualiza o que vier no body. malId não entra
 // aqui: é a identidade externa (Jikan), não é editável.
 export const updateAnimeSchema = z.object({
+  releaseDate: z.iso.date().nullable().optional(),
   title: z.string().min(1).optional(),
   imageUrl: z.string().nullable().optional(),
   synopsis: z.string().nullable().optional(),

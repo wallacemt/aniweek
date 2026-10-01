@@ -111,7 +111,7 @@ function loginWithProvider(provider: 'google' | 'github') {
       <template #trailing>
           <button
             type="button"
-            aria-label="Mostrar ou ocultar senha"
+            v-tooltip="'Mostrar ou ocultar senha'"
             class="text-(--ink-text-faint) hover:text-(--ink-text)"
             @click="showPassword = !showPassword"
           >

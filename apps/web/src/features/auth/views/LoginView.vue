@@ -107,7 +107,7 @@ function loginWithProvider(provider: 'google' | 'github') {
           </RouterLink>
         </template>
         <template #trailing>
-          <button type="button" aria-label="Mostrar ou ocultar senha"
+          <button type="button" v-tooltip="'Mostrar ou ocultar senha'"
             class="text-(--ink-text-faint) hover:text-(--ink-text)" @click="showPassword = !showPassword">
             <EyeOff v-if="showPassword" class="h-4 w-4" />
             <Eye v-else class="h-4 w-4" />
