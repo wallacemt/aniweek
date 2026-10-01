@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { BarChart3, Calendar, Globe, Landmark, Palette, Search } from 'lucide-vue-next'
+import { CircleHelp, BarChart3, Calendar, Globe, Landmark, Palette, Search } from 'lucide-vue-next'
 import { useAuthStore } from '../stores/auth'
 
 // Sidebar recolhível/arrastável (design AnimeWeek Perfil.dc.html) — estado é
@@ -77,6 +77,7 @@ const navItems = [
   { icon: BarChart3, label: 'Estatísticas', to: { name: 'stats' } },
   { icon: Palette, label: 'Temas', to: { name: 'themes' } },
   { icon: Globe, label: 'Social', to: { name: 'social' } },
+  { icon: CircleHelp, label: 'Ajuda', to: { name: 'help' } },
 ] as const
 
 const initial = computed(() => auth.user?.username?.[0]?.toUpperCase() ?? '?')
@@ -97,7 +98,7 @@ const initial = computed(() => auth.user?.username?.[0]?.toUpperCase() ?? '?')
       <div class="h-9 w-0.75 rounded-full bg-white/20" />
     </div>
 
-    <RouterLink :to="{ name: 'home' }" class="relative z-[2] flex items-center gap-2.5 overflow-hidden px-1.5 pb-6">
+    <RouterLink :to="{ name: 'home' }" v-tooltip="'Calendário'" class="relative z-[2] flex items-center gap-2.5 overflow-hidden px-1.5 pb-6">
       <img src="../assets/icon_with_bg.png" alt="" class="h-12.5 w-12.5 flex-shrink-0 object-contain rounded-2xl" />
       <div v-if="expanded" class="overflow-hidden whitespace-nowrap">
         <div class="font-display text-base font-extrabold text-white">AnimeWeek</div>
@@ -105,7 +106,7 @@ const initial = computed(() => auth.user?.username?.[0]?.toUpperCase() ?? '?')
       </div>
     </RouterLink>
 
-    <component :is="item.to ? RouterLink : 'div'" v-for="item in navItems" :key="item.label"
+    <component :is="item.to ? RouterLink : 'div'" v-for="item in navItems" :key="item.label" v-tooltip="item.label"
       v-bind="item.to ? { to: item.to } : {}"
       class="relative z-[2] flex items-center gap-2.5 overflow-hidden rounded-[10px] px-2.5 py-2.75 text-sm whitespace-nowrap"
       :class="item.to
@@ -120,7 +121,7 @@ const initial = computed(() => auth.user?.username?.[0]?.toUpperCase() ?? '?')
 
     <div class="relative z-[2] flex-1" />
 
-    <RouterLink :to="{ name: 'profile' }"
+    <RouterLink :to="{ name: 'profile' }" v-tooltip="'Meu perfil'"
       class="relative justify-center lg:justify-start flex items-center gap-2.5 overflow-hidden rounded-xl   px-2.5 py-3 whitespace-nowrap"
       :style="{
         background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(79,142,247,0.12))',

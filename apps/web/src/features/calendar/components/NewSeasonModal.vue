@@ -40,7 +40,7 @@ async function save() {
       style="background: #0a0b12; border-color: rgba(255, 255, 255, 0.1)">
       <div class="flex items-center justify-between border-b p-4" style="border-color: rgba(255, 255, 255, 0.06)">
         <div class="font-display text-[15px] font-bold text-(--ink-text)">Nova temporada</div>
-        <button type="button" class="text-(--ink-text-muted) hover:text-(--ink-text)" @click="emit('close')">
+        <button v-tooltip="'Fechar'" type="button" class="text-(--ink-text-muted) hover:text-(--ink-text)" @click="emit('close')">
           <X :size="18" />
         </button>
       </div>

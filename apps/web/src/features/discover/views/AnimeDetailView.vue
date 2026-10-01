@@ -235,7 +235,7 @@ const { entry: calendarEntry, pending: savingDay, setWeekday } = useCalendarSlot
                  useCalendarSlot: clique adiciona ou troca de dia, sem modal. -->
             <div class="grid max-w-125 grid-cols-4 gap-2">
               <button v-for="day in WEEKDAY_ORDER" :key="day" type="button" :disabled="savingDay"
-                :title="day === calendarEntry?.weekday ? `Já está em ${WEEKDAY_META[day].short}` : `Mover para ${WEEKDAY_META[day].short}`"
+                v-tooltip="day === calendarEntry?.weekday ? `Já está em ${WEEKDAY_META[day].short}` : `Mover para ${WEEKDAY_META[day].short}`"
                 class="glass flex items-center justify-center gap-1 rounded-[9px] py-2.25 text-center text-xs disabled:cursor-wait disabled:opacity-60"
                 :class="[
                   day === calendarEntry?.weekday ? 'text-white' : 'text-(--ink-text-faint) hover:border-white/25 hover:text-(--ink-text)',

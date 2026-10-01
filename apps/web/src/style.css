@@ -60,3 +60,21 @@ body {
 button:hover {
   cursor: pointer;
 }
+
+:where(button, a, summary, input, select, textarea):focus-visible {
+  outline: 2px solid var(--ink-text);
+  outline-offset: 3px;
+}
+.aw-tooltip {
+  position: fixed;
+  z-index: 10000;
+  max-width: min(260px, calc(100vw - 16px));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 7px 10px;
+  background: #141522;
+  color: #f4f4f8;
+  font-size: 12px;
+  line-height: 1.5;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}

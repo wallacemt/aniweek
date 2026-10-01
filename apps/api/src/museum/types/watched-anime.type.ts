@@ -15,6 +15,7 @@ export interface WatchedAnimeResponse {
   anime: {
     id: string;
     malId: number;
+    releaseDate: string | null;
     title: string;
     imageUrl: string | null;
     episodes: number | null;
@@ -40,6 +41,7 @@ export function toWatchedAnimeResponse(
     anime: {
       id: watched.anime.id,
       malId: watched.anime.malId,
+      releaseDate: watched.anime.releaseDate,
       title: watched.anime.title,
       imageUrl: watched.anime.imageUrl,
       episodes: watched.anime.episodes,

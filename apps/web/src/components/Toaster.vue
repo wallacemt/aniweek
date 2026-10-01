@@ -18,7 +18,7 @@ const toast = useToastStore()
             : 'background: #0f1a14; border-color: rgba(34,197,94,0.35); color: #4ade80'"
         >
           <span class="flex-1 leading-relaxed">{{ t.message }}</span>
-          <button type="button" class="text-(--ink-text-faint) hover:text-(--ink-text)" @click="toast.dismiss(t.id)">
+          <button v-tooltip="'Dispensar notificação'" type="button" class="text-(--ink-text-faint) hover:text-(--ink-text)" @click="toast.dismiss(t.id)">
             <X :size="14" />
           </button>
         </div>

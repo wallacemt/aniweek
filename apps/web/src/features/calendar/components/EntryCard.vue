@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import ReleaseDate from '../../../components/ReleaseDate.vue'
 import { computed, ref } from 'vue'
-import { ExternalLink, Heart, MessageCircle, Minus, Plus, X } from 'lucide-vue-next'
+import { ExternalLink, Pencil, Heart, MessageCircle, Minus, Plus, X } from 'lucide-vue-next'
 import type { CalendarEntryResponse } from '../api'
 import CommentsModal from '../../social/components/CommentsModal.vue'
 import { STATUS_META } from './entry-status-meta'
 
 const props = defineProps<{ entry: CalendarEntryResponse }>()
-const emit = defineEmits<{ remove: []; progress: [currentEpisode: number]; contextmenu: [event: MouseEvent] }>()
+const emit = defineEmits<{ edit: []; remove: []; progress: [currentEpisode: number]; contextmenu: [event: MouseEvent] }>()
 
 // Comentário/reação são de QUEM VISITA (SharedEntryCard) — aqui, no próprio
 // card do dono, é só leitura: sem botão de reagir ao próprio progresso, só
@@ -59,10 +60,13 @@ function step(delta: number) {
         class="pointer-events-none absolute inset-0"
         style="background: linear-gradient(to bottom, rgba(5, 6, 9, 0.5) 0%, transparent 22%, transparent 78%, rgba(5, 6, 9, 0.8) 100%)"
       />
+      <button type="button" v-tooltip="'Editar anime'" class="absolute left-1.5 bottom-1.5 flex h-7 w-7 items-center justify-center rounded-md bg-black/80 text-white" @click.stop="$emit('edit')">
+        <Pencil :size="14" aria-hidden="true" />
+      </button>
       <button
         type="button"
-        title="Remover do calendário"
-        class="absolute right-1.5 bottom-1.5 flex h-4.5 w-4.5 cursor-pointer items-center justify-center rounded-[5px] text-(--ink-text-muted) opacity-0 transition-opacity group-hover:opacity-100 hover:!bg-red-500/80 hover:!text-white"
+        v-tooltip="'Remover do calendário'"
+        class="absolute right-1.5 bottom-1.5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-[5px] text-(--ink-text-muted) transition-opacity hover:!bg-red-500/80 hover:!text-white"
         style="background: rgba(5, 6, 9, 0.75)"
         @click="$emit('remove')"
       >
@@ -73,11 +77,12 @@ function step(delta: number) {
       <div class="mb-1.5 line-clamp-2 min-h-7.25 text-[11.5px] leading-tight font-bold text-(--ink-text)">
         {{ entry.anime.title }}
       </div>
+      <ReleaseDate :date="entry.anime.releaseDate" />
       <div class="mb-1.25 flex items-center gap-1 text-[10px] text-(--ink-text-muted)">
         <button
           type="button"
-          title="Episódio anterior"
-          class="flex h-3.5 w-3.5 flex-shrink-0 cursor-pointer items-center justify-center rounded text-(--ink-text-faint) hover:!bg-white/10 hover:!text-(--ink-text) disabled:cursor-not-allowed"
+          v-tooltip="'Episódio anterior'"
+          class="flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded text-(--ink-text-faint) hover:!bg-white/10 hover:!text-(--ink-text) disabled:cursor-not-allowed"
           :disabled="entry.currentEpisode <= 0"
           @click="step(-1)"
         >
@@ -86,8 +91,8 @@ function step(delta: number) {
         <span class="truncate">{{ epLabel }}</span>
         <button
           type="button"
-          title="Próximo episódio"
-          class="flex h-3.5 w-3.5 flex-shrink-0 cursor-pointer items-center justify-center rounded text-(--ink-text-faint) hover:!bg-white/10 hover:!text-(--ink-text) disabled:cursor-not-allowed"
+          v-tooltip="'Próximo episódio'"
+          class="flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded text-(--ink-text-faint) hover:!bg-white/10 hover:!text-(--ink-text) disabled:cursor-not-allowed"
           :disabled="atMax"
           @click="step(1)"
         >
@@ -124,7 +129,7 @@ function step(delta: number) {
       <button
         v-if="hasSocial"
         type="button"
-        title="Ver comentários e reações"
+        v-tooltip="'Ver comentários e reações'"
         class="mt-1.5 flex w-full items-center justify-center gap-3 rounded-md py-1 text-[9.5px] font-bold text-(--ink-text-muted) hover:!bg-white/10 hover:!text-(--ink-text)"
         style="background: rgba(255, 255, 255, 0.05)"
         @click.stop="showComments = true"

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ReleaseDate from '../../../components/ReleaseDate.vue'
 import type { AnimeDto } from '@aniweek/shared'
 
 defineProps<{ anime: AnimeDto; selected?: boolean }>()
@@ -32,6 +33,7 @@ defineEmits<{ select: [anime: AnimeDto] }>()
       <div class="text-[11px] text-(--ink-text-faint)">
         {{ [anime.type, anime.episodes ? `${anime.episodes} eps` : null, anime.year].filter(Boolean).join(' · ') }}
       </div>
+      <ReleaseDate :date="anime.releaseDate" />
       <div v-if="anime.genres.length" class="flex flex-wrap gap-1.5">
         <span
           v-for="genre in anime.genres.slice(0, 2)"

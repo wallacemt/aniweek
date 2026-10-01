@@ -54,7 +54,7 @@ async function onFileChange(e: Event) {
       </div>
       <button
         type="button"
-        title="Trocar avatar"
+        v-tooltip="'Trocar avatar'"
         :disabled="uploading"
         class="absolute -right-0.5 -bottom-0.5 flex h-8 w-8 items-center justify-center rounded-full border-2 disabled:opacity-60"
         style="background: #1a1c26; border-color: var(--ink-bg)"

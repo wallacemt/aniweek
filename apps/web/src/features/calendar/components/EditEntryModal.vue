@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { EntryStatus, type UpdateAnimeInput, type UpdateEntryInput, type Weekday } from '@aniweek/shared'
+import { updateAnimeSchema, EntryStatus, type UpdateAnimeInput, type UpdateEntryInput, type Weekday } from '@aniweek/shared'
 import { X } from 'lucide-vue-next'
 import AwSelect from '../../../components/AwSelect.vue'
 import { HttpError } from '../../../lib/http'
@@ -19,6 +19,7 @@ const toast = useToastStore()
 // Espelho do anime (M6, fora do blueprint) — todos os campos do form
 // partem do que já está no board (nenhuma chamada extra pra popular o
 // modal, ver EntryResponse.anime em calendar-board.type.ts).
+const releaseDate = ref(props.entry.anime.releaseDate ?? '')
 const title = ref(props.entry.anime.title)
 const imageUrl = ref(props.entry.anime.imageUrl ?? '')
 const synopsis = ref(props.entry.anime.synopsis ?? '')
@@ -46,6 +47,7 @@ async function save() {
   saving.value = true
   try {
     const animePatch: UpdateAnimeInput = {}
+    if ((releaseDate.value || null) !== props.entry.anime.releaseDate) animePatch.releaseDate = releaseDate.value || null
     if (title.value !== props.entry.anime.title) animePatch.title = title.value
     const imageUrlValue = imageUrl.value.trim() || null
     if (imageUrlValue !== props.entry.anime.imageUrl) animePatch.imageUrl = imageUrlValue
@@ -71,7 +73,12 @@ async function save() {
     if (status.value !== props.entry.status) entryPatch.status = status.value
 
     if (Object.keys(animePatch).length > 0) {
-      await calendarApi.updateAnime(props.entry.anime.id, animePatch)
+      const parsed = updateAnimeSchema.safeParse(animePatch)
+      if (!parsed.success) {
+        toast.push('Confira os dados do anime e informe uma data válida.')
+        return
+      }
+      await calendarApi.updateAnime(props.entry.anime.id, parsed.data)
       calendar.patchAnime(props.entry.id, animePatch)
     }
     if (Object.keys(entryPatch).length > 0) {
@@ -94,7 +101,7 @@ async function save() {
     >
       <div class="flex flex-shrink-0 items-center justify-between border-b p-4" style="border-color: rgba(255, 255, 255, 0.06)">
         <div class="font-display text-[15px] font-bold text-(--ink-text)">Editar anime</div>
-        <button type="button" class="text-(--ink-text-muted) hover:text-(--ink-text)" @click="emit('close')">
+        <button v-tooltip="'Fechar'" type="button" class="text-(--ink-text-muted) hover:text-(--ink-text)" @click="emit('close')">
           <X :size="18" />
         </button>
       </div>
@@ -103,6 +110,12 @@ async function save() {
         <label class="block">
           <span class="mb-1 block text-[11.5px] text-(--ink-text-faint)">Título</span>
           <input v-model="title" type="text" class="aw-input" />
+        </label>
+
+        <label class="block">
+          <span class="mb-1 block text-[11.5px] text-(--ink-text-muted)">Data de lançamento (opcional)</span>
+          <input v-model="releaseDate" type="date" class="aw-input" aria-describedby="release-date-hint" />
+          <span id="release-date-hint" class="mt-1 block text-xs text-(--ink-text-muted)">Estreia do anime. Deixe em branco para remover a data do card.</span>
         </label>
 
         <label class="block">

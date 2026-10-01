@@ -107,7 +107,7 @@ async function bringAnime(entry: CalendarEntryResponse, weekday: Weekday) {
     >
       <div class="flex flex-shrink-0 items-center justify-between border-b p-4" style="border-color: rgba(255, 255, 255, 0.06)">
         <div class="flex items-center gap-3">
-          <button
+          <button v-tooltip="'Voltar'"
             v-if="view !== 'years'"
             type="button"
             class="flex h-8 w-8 items-center justify-center rounded-lg border text-(--ink-text-muted) hover:text-(--ink-text)"
@@ -129,7 +129,7 @@ async function bringAnime(entry: CalendarEntryResponse, weekday: Weekday) {
             </div>
           </div>
         </div>
-        <button type="button" class="text-(--ink-text-muted) hover:text-(--ink-text)" @click="emit('close')">
+        <button v-tooltip="'Fechar'" type="button" class="text-(--ink-text-muted) hover:text-(--ink-text)" @click="emit('close')">
           <X :size="18" />
         </button>
       </div>

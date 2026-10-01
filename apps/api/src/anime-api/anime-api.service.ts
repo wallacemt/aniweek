@@ -54,6 +54,7 @@ const MEDIA_CORE_FIELDS = `
   genres
   format
   seasonYear
+  startDate { year month day }
   averageScore
   status
 `;
@@ -96,7 +97,6 @@ const FULL_BY_ID_QUERY = `
       bannerImage
       source
       duration
-      startDate { year month day }
       endDate { year month day }
       season
       trailer { id site thumbnail }
@@ -136,6 +136,7 @@ interface AniListMediaRaw {
   genres: string[];
   format: string | null;
   seasonYear: number | null;
+  startDate?: AniListDateRaw;
   averageScore: number | null;
   status: string | null;
 }
@@ -210,7 +211,7 @@ export class AnimeApiService {
   constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis | null) {}
 
   async searchAnime(input: SearchAnimesQuery): Promise<PaginatedAnimeDto> {
-    const cacheKey = `animeapi:search:${input.query.toLowerCase()}:${input.page}:${input.type ?? ''}:${input.status ?? ''}:${input.orderBy ?? ''}:${input.genre ?? ''}`;
+    const cacheKey = `animeapi:v2:search:${input.query.toLowerCase()}:${input.page}:${input.type ?? ''}:${input.status ?? ''}:${input.orderBy ?? ''}:${input.genre ?? ''}`;
     const cached = await this.readCache<PaginatedAnimeDto>(cacheKey);
     if (cached) return cached;
 
@@ -228,7 +229,7 @@ export class AnimeApiService {
   }
 
   async getAnimeById(malId: number): Promise<AnimeDto> {
-    const cacheKey = `animeapi:anime:${malId}`;
+    const cacheKey = `animeapi:v2:anime:${malId}`;
     const cached = await this.readCache<AnimeDto>(cacheKey);
     if (cached) return cached;
 
@@ -244,7 +245,7 @@ export class AnimeApiService {
   }
 
   async getAnimeFullById(malId: number): Promise<AnimeFullDto> {
-    const cacheKey = `animeapi:anime:full:${malId}`;
+    const cacheKey = `animeapi:v2:anime:full:${malId}`;
     const cached = await this.readCache<AnimeFullDto>(cacheKey);
     if (cached) return cached;
 
@@ -261,7 +262,7 @@ export class AnimeApiService {
     const { page, type, status, orderBy, genre } = query;
     // Mesma composição de cache key da busca (searchAnime) — filtros
     // diferentes são resultados diferentes, não podem compartilhar entrada.
-    const cacheKey = `animeapi:seasonNowAnimes:${page}:${type ?? ''}:${status ?? ''}:${orderBy ?? ''}:${genre ?? ''}`;
+    const cacheKey = `animeapi:v2:seasonNowAnimes:${page}:${type ?? ''}:${status ?? ''}:${orderBy ?? ''}:${genre ?? ''}`;
     const cached = await this.readCache<PaginatedAnimeDto>(cacheKey);
     if (cached) return cached;
 
@@ -463,6 +464,10 @@ function mapAniListPage(raw: AniListPageRaw): PaginatedAnimeDto {
 function mapAniListMedia(raw: AniListMediaRaw): AnimeDto {
   return animeDtoSchema.parse({
     malId: raw.idMal,
+    releaseDate:
+      raw.startDate?.year && raw.startDate.month && raw.startDate.day
+        ? `${String(raw.startDate.year).padStart(4, '0')}-${String(raw.startDate.month).padStart(2, '0')}-${String(raw.startDate.day).padStart(2, '0')}`
+        : null,
     title: raw.title.romaji ?? raw.title.english ?? '',
     imageUrl: raw.coverImage.large,
     synopsis: raw.description ? stripHtml(raw.description) : null,

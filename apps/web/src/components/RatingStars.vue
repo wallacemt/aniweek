@@ -8,7 +8,7 @@ const emit = defineEmits<{ 'update:modelValue': [number] }>()
 
 <template>
   <div class="flex flex-wrap gap-1">
-    <button v-for="n in max" :key="n" type="button" class="text-xl leading-none transition-colors"
+    <button v-for="n in max" :key="n" type="button" v-tooltip="`Nota ${n} de ${max}`" :aria-pressed="n === modelValue" class="text-xl leading-none transition-colors"
       :style="{ color: n <= modelValue ? '#FBBF24' : 'rgba(255,255,255,0.15)' }"
       @click="emit('update:modelValue', n)">★</button>
   </div>

@@ -129,6 +129,7 @@ async function commitRename(id: string) {
             >
               <button
                 type="button"
+                v-tooltip="`Ativar tema ${t.name}`"
                 class="mb-2.5 h-10 w-full rounded-[9px]"
                 :style="{ background: `linear-gradient(135deg,${t.accent},${t.accent2})` }"
                 @click="store.activate(t.id)"
@@ -147,7 +148,7 @@ async function commitRename(id: string) {
                 </span>
                 <div class="flex flex-shrink-0 items-center gap-1">
                   <Check v-if="runtime.activeTheme?.id === t.id" :size="12" :style="{ color: t.accent }" />
-                  <button type="button" class="text-(--ink-text-faint) opacity-0 group-hover:opacity-100 hover:text-(--ink-error)" @click="store.remove(t.id)">
+                  <button type="button" v-tooltip="'Excluir tema'" class="text-(--ink-text-muted) hover:text-(--ink-error)" @click="store.remove(t.id)">
                     <Trash2 :size="12" />
                   </button>
                 </div>

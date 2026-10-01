@@ -203,7 +203,7 @@ function onFollow(user: DiscoverUserDto) {
             style="background: rgba(94,234,212,0.1); border: 1px solid rgba(94,234,212,0.25); color: #5eead4">
             👁️ Visualização
           </span>
-          <button type="button" title="Revogar acesso"
+          <button type="button" v-tooltip="'Revogar acesso'"
             class="flex flex-shrink-0 items-center gap-1 rounded-[9px] px-3 py-1.75 text-[12px] font-semibold text-red-400"
             style="border: 1px solid rgba(239,68,68,0.3)" @click="social.revoke(grant.id)">
             <X :size="12" /> Revogar

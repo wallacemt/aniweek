@@ -19,6 +19,7 @@ export interface EntryResponse {
   anime: {
     id: string;
     malId: number;
+    releaseDate: string | null;
     title: string;
     imageUrl: string | null;
     linkAccess: string | null;
@@ -70,6 +71,7 @@ export function toCalendarBoard(
       anime: {
         id: entry.anime.id,
         malId: entry.anime.malId,
+        releaseDate: entry.anime.releaseDate,
         title: entry.anime.title,
         imageUrl: entry.anime.imageUrl,
         linkAccess: entry.anime.linkAccess,

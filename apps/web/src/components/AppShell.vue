@@ -31,7 +31,7 @@ async function onLogout() {
 
     <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
       <div
-        class="glass glass-strong flex h-19 flex-shrink-0 items-center justify-between rounded-none border-x-0 border-t-0 px-8">
+        class="glass glass-strong flex h-19 flex-shrink-0 items-center justify-between rounded-none border-x-0 border-t-0 px-3 sm:px-8">
         <div>
           <div class="font-display text-[19px] font-extrabold text-white">{{ title }}</div>
           <div v-if="subtitle" class="text-[12.5px] text-(--ink-text-faint)">{{ subtitle }}</div>
@@ -39,7 +39,7 @@ async function onLogout() {
         <div class="flex items-center gap-3.5">
           <!-- Feed real + SSE ligados no App.vue (M10) — badge é só a contagem de
                não lidas, o feed em si mora na aba "Social & Notificações". -->
-          <RouterLink :to="{ name: 'social' }"
+          <RouterLink :to="{ name: 'social' }" v-tooltip="'Notificações'"
             class="relative glass flex h-9 w-9 items-center justify-center rounded-[10px]">
             <Bell :size="16" class="text-(--ink-text-muted)" />
             <span v-if="social.unreadCount > 0"
@@ -48,7 +48,7 @@ async function onLogout() {
               {{ social.unreadCount > 9 ? '9+' : social.unreadCount }}
             </span>
           </RouterLink>
-          <button type="button" title="Sair"
+          <button type="button" v-tooltip="'Sair'"
             class="glass flex h-9 w-9 items-center justify-center rounded-[10px] hover:border-white/30"
             @click="onLogout">
             <LogOut :size="16" class="text-(--ink-text-muted)" />

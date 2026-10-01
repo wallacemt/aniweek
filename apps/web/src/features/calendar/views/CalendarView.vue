@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import type { Weekday } from '@aniweek/shared'
 import { VueDraggable, type DraggableEvent } from 'vue-draggable-plus'
 import { History, Plus, RotateCcw } from 'lucide-vue-next'
+import WelcomeCard from '../../help/WelcomeCard.vue'
 import AppShell from '../../../components/AppShell.vue'
 import { seasonMeta } from '../../../lib/season-meta'
 import AddEntryModal from '../components/AddEntryModal.vue'
@@ -129,6 +130,7 @@ function onDragEnd(evt: DraggableEvent) {
 <template>
   <AppShell title="Calendário Semanal" :subtitle="`${totalEntries} animes na semana`">
     <div class="flex h-full flex-col">
+      <WelcomeCard />
       <CalendarBoardSkeleton v-if="calendar.loading" />
       <p v-else-if="calendar.error" class="p-8 text-sm text-(--ink-error)">{{ calendar.error }}</p>
 
@@ -139,7 +141,7 @@ function onDragEnd(evt: DraggableEvent) {
              segurança se ainda assim não couber. -->
         <div v-if="calendar.board"
           class="glass glass-strong border-none flex flex-shrink-0 flex-wrap items-center justify-end gap-1.5 rounded-none   px-3 py-2.5 sm:gap-2.5 sm:px-6 sm:py-3">
-          <button type="button" title="Trocar temporada"
+          <button type="button" v-tooltip="'Trocar temporada'"
             class="glass flex items-center gap-2 rounded-[10px] px-2.5 py-2 text-[12.5px] text-(--ink-text) sm:px-3.5"
             @click="switchSeasonOpen = true">
             {{ seasonMeta[calendar.board.season].emoji }}
@@ -147,17 +149,17 @@ function onDragEnd(evt: DraggableEvent) {
             }}</span>
             <span class="text-(--ink-text-faint)">▾</span>
           </button>
-          <button type="button" title="Trazer anime específico de outra temporada"
+          <button type="button" v-tooltip="'Trazer anime específico de outra temporada'"
             class="glass flex items-center gap-1.5 rounded-[10px] px-2.5 py-2 text-[12.5px] text-(--ink-text) sm:px-3.5"
             @click="bringForwardOpen = true">
             <History :size="13" /> <span class="hidden sm:inline">Buscar em outra temporada</span>
           </button>
-          <button type="button" title="Importar da temporada anterior"
+          <button type="button" v-tooltip="'Importar da temporada anterior'"
             class="glass flex items-center gap-1.5 rounded-[10px] px-2.5 py-2 text-[12.5px]"
             style="border-color: rgba(139, 92, 246, 0.35); color: #c4b5fd" @click="calendar.importPreviousBulk()">
             <RotateCcw :size="13" /> <span class="hidden sm:inline">Importar da temporada anterior</span>
           </button>
-          <button type="button" title="Nova temporada"
+          <button type="button" v-tooltip="'Nova temporada'"
             class="glass flex items-center gap-1.5 rounded-[10px] px-2.5 py-2 text-[12.5px] text-(--ink-text) sm:px-3.5"
             @click="newSeasonOpen = true">
             <Plus :size="13" /> <span class="hidden sm:inline">Nova temporada</span>
@@ -197,13 +199,13 @@ function onDragEnd(evt: DraggableEvent) {
                 class="grid flex-1 grid-cols-1 content-start gap-2.5 pb-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 "
                 :data-weekday="day.key" @end="onDragEnd">
                 <EntryCard v-for="entry in calendar.board!.entries[day.key]" :key="entry.id" :data-entry-id="entry.id"
-                  :entry="entry" @remove="calendar.removeEntry(day.key, entry.id)"
+                  :entry="entry" @edit="editingEntry = { entry, weekday: day.key }" @remove="calendar.removeEntry(day.key, entry.id)"
                   @progress="calendar.updateProgress(day.key, entry.id, $event)"
                   @contextmenu="onCardContextMenu($event, entry, day.key)" />
               </VueDraggable>
 
               <button type="button"
-                class="h-9.5 flex-shrink-0 rounded-[10px] border border-dashed text-[11px] text-(--ink-text-faint) opacity-0 transition-opacity group-hover:opacity-100 hover:border-(--brand-secondary)/40 hover:text-(--brand-secondary)"
+                class="h-9.5 flex-shrink-0 rounded-[10px] border border-dashed text-[11px] text-(--ink-text-faint) transition-opacity hover:border-(--brand-secondary)/40 hover:text-(--brand-secondary)"
                 style="border-color: rgba(255, 255, 255, 0.15)"
                 @click="openAddModal(day.key, `${day.short}${day.isExtra ? '' : ` · ${day.date}`}`)">
                 + Adicionar

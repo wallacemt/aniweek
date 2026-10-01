@@ -36,6 +36,7 @@ function fakeMedia(overrides: Record<string, unknown> = {}) {
     seasonYear: 2023,
     averageScore: 89,
     status: 'FINISHED',
+    startDate: { year: 2023, month: 9, day: 29 },
     ...overrides,
   };
 }
@@ -75,6 +76,7 @@ describe('AnimeApiService', () => {
           year: 2023,
           score: 8.9,
           status: 'Finished Airing',
+          releaseDate: '2023-09-29',
         },
       ],
     });
@@ -141,4 +143,26 @@ describe('AnimeApiService', () => {
       'Uma maga élfica\nvive há séculos — e sobrevive.',
     );
   });
+});
+
+describe('release date', () => {
+  afterEach(() => jest.restoreAllMocks());
+  it.each([
+    [{ year: 2024, month: 2, day: 29 }, '2024-02-29'],
+    [{ year: 2026, month: 9, day: null }, null],
+    [null, null],
+    [undefined, null],
+  ])(
+    'maps complete dates without inventing partial dates: %j',
+    async (startDate, expected) => {
+      jest
+        .spyOn(global, 'fetch')
+        .mockResolvedValue(
+          fakeGraphQLResponse({ Media: fakeMedia({ startDate }) }),
+        );
+      expect(
+        (await buildAnimeApiService().getAnimeById(52991)).releaseDate,
+      ).toBe(expected);
+    },
+  );
 });

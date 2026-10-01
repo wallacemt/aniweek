@@ -40,7 +40,7 @@ async function save() {
     <div class="w-full max-w-105 rounded-2xl border p-6" style="background: #0a0b12; border-color: rgba(255, 255, 255, 0.1)">
       <div class="mb-1 flex items-start justify-between">
         <div class="font-display text-[16px] font-bold text-(--ink-text)">Marcar como assistido</div>
-        <button type="button" class="text-(--ink-text-muted) hover:text-(--ink-text)" @click="emit('close')">
+        <button v-tooltip="'Fechar'" type="button" class="text-(--ink-text-muted) hover:text-(--ink-text)" @click="emit('close')">
           <X :size="18" />
         </button>
       </div>

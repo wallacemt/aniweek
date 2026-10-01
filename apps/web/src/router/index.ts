@@ -26,9 +26,12 @@ declare module "vue-router" {
   }
 }
 
+import HelpView from '../features/help/views/HelpView.vue';
+
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
+    { path: "/ajuda", name: "help", component: HelpView, meta: { requiresAuth: true } },
     // Sem requiresAuth: RootView decide entre Landing (guest) e Calendar
     // (autenticado) em runtime — ver features/landing/views/RootView.vue e a
     // auditoria SEO (a home não pode mais redirecionar direto pro /login).

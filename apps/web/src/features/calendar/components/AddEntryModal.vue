@@ -61,7 +61,7 @@ async function addAnime(anime: AnimeDto) {
         <div class="font-display text-[15px] font-bold text-(--ink-text)">
           Adicionar a {{ weekdayLabel }}
         </div>
-        <button type="button" class="text-(--ink-text-muted) hover:text-(--ink-text)" @click="emit('close')">
+        <button v-tooltip="'Fechar'" type="button" class="text-(--ink-text-muted) hover:text-(--ink-text)" @click="emit('close')">
           <X :size="18" />
         </button>
       </div>

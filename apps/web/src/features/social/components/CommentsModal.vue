@@ -108,7 +108,7 @@ function avatarColor(seed: string): string {
             <div class="font-display text-[15.5px] font-bold text-(--ink-text)">Comentários</div>
             <div class="truncate text-[12px] text-(--ink-text-faint)">{{ animeTitle }}</div>
           </div>
-          <button type="button" class="flex h-8 w-8 flex-shrink-0 items-center justify-center text-(--ink-text-muted) hover:text-(--ink-text)" @click="emit('close')">
+          <button v-tooltip="'Fechar'" type="button" class="flex h-8 w-8 flex-shrink-0 items-center justify-center text-(--ink-text-muted) hover:text-(--ink-text)" @click="emit('close')">
             <X :size="19" />
           </button>
         </div>
@@ -136,8 +136,8 @@ function avatarColor(seed: string): string {
             </div>
             <p class="text-[13px] leading-relaxed break-words text-(--ink-text-muted)">{{ comment.body }}</p>
           </div>
-          <button v-if="comment.author.id === auth.user?.id" type="button" title="Remover comentário"
-            class="flex-shrink-0 text-(--ink-text-faint) opacity-0 hover:!text-red-400 group-hover:opacity-100"
+          <button v-if="comment.author.id === auth.user?.id" type="button" v-tooltip="'Remover comentário'"
+            class="flex-shrink-0 text-(--ink-text-faint) hover:!text-red-400"
             @click="remove(comment)">
             <Trash2 :size="13" />
           </button>
@@ -150,7 +150,7 @@ function avatarColor(seed: string): string {
           <form v-if="canPost" class="flex items-center gap-2" @submit.prevent="submit">
             <input v-model="body" type="text" maxlength="500" placeholder="Escreva um comentário..."
               class="h-11 flex-1 rounded-[10px] border border-white/10 bg-white/4 px-3.5 text-[14px] text-(--ink-text) outline-none placeholder:text-(--ink-text-faint) sm:h-10 sm:text-[13px]" />
-            <button type="submit" :disabled="!body.trim() || posting"
+            <button v-tooltip="'Enviar comentário'" type="submit" :disabled="!body.trim() || posting"
               class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[10px] text-white disabled:opacity-40 sm:h-10 sm:w-10"
               style="background: linear-gradient(135deg,#8B5CF6,#4F8EF7)">
               <Send :size="16" />
