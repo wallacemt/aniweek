@@ -1,0 +1,1 @@
+ALTER TABLE "User" ADD COLUMN "recentWatchesPublic" BOOLEAN NOT NULL DEFAULT false;

@@ -28,7 +28,10 @@ function buildSocialService() {
     reaction: { findUnique: jest.fn(), create: jest.fn(), delete: jest.fn() },
   };
   const events = { stream: jest.fn(), emit: jest.fn() };
-  const museum = { stats: jest.fn().mockResolvedValue({ totalWatched: 0 }) };
+  const museum = {
+    stats: jest.fn().mockResolvedValue({ totalWatched: 0 }),
+    recentWatches: jest.fn().mockResolvedValue([]),
+  };
   const social = new SocialService(
     prisma as never,
     events as never,
@@ -245,5 +248,52 @@ describe('SocialService', () => {
 
     expect(profile.stats).not.toBeNull();
     expect(museum.stats).toHaveBeenCalledWith('user-1');
+  });
+
+  it('getPublicProfile respeita o opt-out do histórico para terceiros', async () => {
+    const { social, prisma, museum } = buildSocialService();
+    prisma.user.findUnique.mockResolvedValue({
+      id: 'user-2', username: 'kaiofz', avatarUrl: null, bio: null,
+      createdAt: new Date(), statsPublic: true, recentWatchesPublic: false,
+    });
+    prisma.follow.count.mockResolvedValue(0);
+    prisma.follow.findUnique.mockResolvedValue(null);
+
+    const profile = await social.getPublicProfile('kaiofz', 'user-1');
+
+    expect(profile.recentWatches).toBeNull();
+    expect(museum.recentWatches).not.toHaveBeenCalled();
+  });
+
+  it('getPublicProfile devolve histórico recente ao dono independentemente da preferência', async () => {
+    const { social, prisma, museum } = buildSocialService();
+    prisma.user.findUnique.mockResolvedValue({
+      id: 'user-1', username: 'wallacemt', avatarUrl: null, bio: null,
+      createdAt: new Date(), statsPublic: false, recentWatchesPublic: false,
+    });
+    prisma.follow.count.mockResolvedValue(0);
+    prisma.follow.findUnique.mockResolvedValue(null);
+    museum.recentWatches.mockResolvedValue([{ malId: 1 }]);
+
+    const profile = await social.getPublicProfile('wallacemt', 'user-1');
+
+    expect(profile.recentWatches).toEqual([{ malId: 1 }]);
+    expect(museum.recentWatches).toHaveBeenCalledWith('user-1');
+  });
+
+  it('getPublicProfile inclui o histórico público quando o usuário ativou a preferência', async () => {
+    const { social, prisma, museum } = buildSocialService();
+    prisma.user.findUnique.mockResolvedValue({
+      id: 'user-2', username: 'kaiofz', avatarUrl: null, bio: null,
+      createdAt: new Date(), statsPublic: false, recentWatchesPublic: true,
+    });
+    prisma.follow.count.mockResolvedValue(0);
+    prisma.follow.findUnique.mockResolvedValue(null);
+    museum.recentWatches.mockResolvedValue([{ malId: 1 }]);
+
+    const profile = await social.getPublicProfile('kaiofz', 'user-1');
+
+    expect(profile.recentWatches).toEqual([{ malId: 1 }]);
+    expect(museum.recentWatches).toHaveBeenCalledWith('user-2');
   });
 });

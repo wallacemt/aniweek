@@ -48,6 +48,7 @@ export const updateProfileSchema = z.object({
   // M10/LGPD: opt-out de exibir as estatísticas (RF-10) no perfil público
   // (GET /social/users/:username) — ver comentário no model User.
   statsPublic: z.boolean().optional(),
+  recentWatchesPublic: z.boolean().optional(),
 });
 
 // M10.3 — vocabulário fechado de gênero da AniList (genre_in só aceita esses

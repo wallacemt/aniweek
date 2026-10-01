@@ -14,6 +14,7 @@ export interface Profile {
   emailVerified: boolean
   createdAt: string
   statsPublic: boolean
+  recentWatchesPublic: boolean
   stats: ProfileStats
   connectedProviders: AuthProvider[]
 }

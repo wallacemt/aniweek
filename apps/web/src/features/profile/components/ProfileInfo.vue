@@ -20,6 +20,7 @@ const bio = ref(props.profile.bio ?? '')
 const error = ref<string | null>(null)
 const saving = ref(false)
 const savingPrivacy = ref(false)
+const savingHistoryPrivacy = ref(false)
 
 // Independente do form de username/bio — é um toggle isolado, não faz
 // sentido exigir "Editar" -> "Salvar" só pra isso (LGPD: o titular deve
@@ -32,6 +33,17 @@ async function toggleStatsPublic() {
     toast.push(err instanceof HttpError ? err.message : 'Não foi possível salvar.')
   } finally {
     savingPrivacy.value = false
+  }
+}
+
+async function toggleRecentWatchesPublic() {
+  savingHistoryPrivacy.value = true
+  try {
+    await store.update({ recentWatchesPublic: !props.profile.recentWatchesPublic })
+  } catch (err) {
+    toast.push(err instanceof HttpError ? err.message : 'Não foi possível salvar.')
+  } finally {
+    savingHistoryPrivacy.value = false
   }
 }
 
@@ -162,6 +174,22 @@ async function save() {
         @click="toggleStatsPublic">
         <div class="h-5 w-5 rounded-full bg-white transition-transform"
           :style="{ transform: profile.statsPublic ? 'translateX(18px)' : 'translateX(0)' }" />
+      </button>
+    </div>
+
+    <div class="mt-5 flex items-center justify-between border-t border-white/6 pt-4.5">
+      <div class="pr-4">
+        <div class="text-[13px] font-semibold text-(--ink-text)">Histórico recente público</div>
+        <div class="text-[11.5px] text-(--ink-text-faint)">
+          Mostrar até 12 animes assistidos recentemente no seu perfil. Outras pessoas poderão ver esse histórico.
+        </div>
+      </div>
+      <button type="button" role="switch" :aria-checked="profile.recentWatchesPublic" aria-label="Histórico recente público" :disabled="savingHistoryPrivacy"
+        class="h-6 w-10.5 flex-shrink-0 rounded-full p-0.5 transition-colors disabled:opacity-60"
+        :style="{ background: profile.recentWatchesPublic ? 'linear-gradient(135deg,#8B5CF6,#4F8EF7)' : 'rgba(255,255,255,0.1)' }"
+        @click="toggleRecentWatchesPublic">
+        <div class="h-5 w-5 rounded-full bg-white transition-transform"
+          :style="{ transform: profile.recentWatchesPublic ? 'translateX(18px)' : 'translateX(0)' }" />
       </button>
     </div>
   </div>

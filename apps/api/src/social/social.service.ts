@@ -137,10 +137,14 @@ export class SocialService {
     // Dono sempre vê as próprias stats (statsPublic só rege visibilidade PRA
     // OUTROS) — sem esse OR, o próprio usuário que desligou statsPublic não
     // veria nem o próprio perfil público completo.
-    const stats =
+    const [stats, recentWatches] = await Promise.all([
       user.statsPublic || user.id === viewerId
-        ? await this.museum.stats(user.id)
-        : null;
+        ? this.museum.stats(user.id)
+        : null,
+      user.recentWatchesPublic || user.id === viewerId
+        ? this.museum.recentWatches(user.id)
+        : null,
+    ]);
 
     return {
       id: user.id,
@@ -153,6 +157,7 @@ export class SocialService {
       isFollowedByMe: Boolean(viewerFollowsThem),
       isFollowingMe: Boolean(theyFollowViewer),
       stats,
+      recentWatches,
     };
   }
 

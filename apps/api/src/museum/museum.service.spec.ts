@@ -1,5 +1,5 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { EntryStatus, Prisma } from '../../generated/prisma/client';
+import { EntryStatus, Prisma, Season } from '../../generated/prisma/client';
 import { MuseumService } from './museum.service';
 
 // Cobre a agregação de stats() (RF-10) — a parte não-trivial do módulo
@@ -31,6 +31,37 @@ function buildMuseumService() {
 }
 
 describe('MuseumService', () => {
+  it('recentWatches limita a 12 e usa a estação narrativa ou a data como fallback', async () => {
+    const { museum, prisma } = buildMuseumService();
+    const completedAt = new Date('2024-08-10T00:00:00.000Z');
+    prisma.watchedAnime.findMany.mockResolvedValue([
+      {
+        completedAt,
+        watchedSeason: Season.FALL,
+        watchedYear: 2019,
+        anime: { malId: 1, title: 'Anime declarado', imageUrl: null },
+      },
+      {
+        completedAt,
+        watchedSeason: null,
+        watchedYear: null,
+        anime: { malId: 2, title: 'Anime fallback', imageUrl: 'cover' },
+      },
+    ]);
+
+    const result = await museum.recentWatches('user-1');
+
+    expect(prisma.watchedAnime.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      take: 12,
+      orderBy: { completedAt: 'desc' },
+      select: expect.objectContaining({ anime: { select: { malId: true, title: true, imageUrl: true } } }),
+    }));
+    expect(result.map(({ season, year }) => [season, year])).toEqual([
+      [Season.FALL, 2019],
+      [Season.SUMMER, 2024],
+    ]);
+  });
+
   it('stats calcula nota média, horas totais e ranking de gêneros', async () => {
     const { museum, prisma } = buildMuseumService();
     const now = new Date();

@@ -74,6 +74,7 @@ model User {
   // a qualquer momento (PATCH /users/me), o que é o mínimo exigido de
   // controle do titular sobre dado seu exposto a terceiros.
   statsPublic Boolean @default(true)
+  recentWatchesPublic Boolean @default(false)
 
   calendars Calendar[]
   watched   WatchedAnime[]

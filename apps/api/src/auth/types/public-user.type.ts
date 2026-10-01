@@ -10,6 +10,7 @@ export interface PublicUser {
   emailVerified: boolean;
   createdAt: Date;
   statsPublic: boolean;
+  recentWatchesPublic: boolean;
 }
 
 export function toPublicUser(user: User): PublicUser {
@@ -22,5 +23,6 @@ export function toPublicUser(user: User): PublicUser {
     emailVerified: user.emailVerified,
     createdAt: user.createdAt,
     statsPublic: user.statsPublic,
+    recentWatchesPublic: user.recentWatchesPublic,
   };
 }
