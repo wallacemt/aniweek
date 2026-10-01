@@ -3,7 +3,10 @@ import type {
   Notification,
   User,
 } from '../../../generated/prisma/client';
-import type { MuseumStatsResponse } from '../../museum/museum.service';
+import type {
+  MuseumStatsResponse,
+  RecentWatchResponse,
+} from '../../museum/museum.service';
 
 export interface FollowStatsResponse {
   followers: number;
@@ -83,6 +86,7 @@ export interface PublicProfileResponse {
   isFollowedByMe: boolean;
   isFollowingMe: boolean;
   stats: MuseumStatsResponse | null;
+  recentWatches: RecentWatchResponse[] | null;
 }
 
 export interface CommentResponse {

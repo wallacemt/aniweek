@@ -10,7 +10,7 @@ import type {
 } from '@aniweek/shared';
 import { PrismaService } from '../prisma/prisma.service';
 import { AnimesService } from '../animes/animes.service';
-import { EntryStatus, Prisma } from '../../generated/prisma/client';
+import { EntryStatus, Prisma, Season } from '../../generated/prisma/client';
 import {
   toWatchedAnimeResponse,
   type WatchedAnimeResponse,
@@ -31,6 +31,24 @@ const MONTH_LABELS = [
   'Nov',
   'Dez',
 ];
+const RECENT_WATCHES_LIMIT = 12;
+
+function seasonForDate(date: Date): Season {
+  const month = date.getUTCMonth();
+  if (month < 3) return Season.WINTER;
+  if (month < 6) return Season.SPRING;
+  if (month < 9) return Season.SUMMER;
+  return Season.FALL;
+}
+
+export interface RecentWatchResponse {
+  malId: number;
+  title: string;
+  imageUrl: string | null;
+  completedAt: Date;
+  season: Season;
+  year: number;
+}
 
 export interface MuseumStatsResponse {
   totalWatched: number;
@@ -63,6 +81,27 @@ export class MuseumService {
       this.resolveFeaturedId(userId),
     ]);
     return watched.map((w) => toWatchedAnimeResponse(w, featuredId));
+  }
+
+  async recentWatches(userId: string): Promise<RecentWatchResponse[]> {
+    const watched = await this.prisma.watchedAnime.findMany({
+      where: { userId },
+      select: {
+        completedAt: true,
+        watchedSeason: true,
+        watchedYear: true,
+        anime: { select: { malId: true, title: true, imageUrl: true } },
+      },
+      orderBy: { completedAt: 'desc' },
+      take: RECENT_WATCHES_LIMIT,
+    });
+
+    return watched.map((item) => ({
+      ...item.anime,
+      completedAt: item.completedAt,
+      season: item.watchedSeason ?? seasonForDate(item.completedAt),
+      year: item.watchedYear ?? item.completedAt.getUTCFullYear(),
+    }));
   }
 
   // Entrada manual (fora do fluxo de calendário) — reaproveita o upsert do

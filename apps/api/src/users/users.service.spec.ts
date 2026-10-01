@@ -32,6 +32,8 @@ const baseUser = {
   bio: null,
   emailVerified: true,
   createdAt: new Date('2025-03-01'),
+  statsPublic: true,
+  recentWatchesPublic: false,
   oauthAccounts: [
     {
       id: 'oauth-1',
@@ -61,6 +63,21 @@ describe('UsersService', () => {
       users.updateProfile('user-1', { username: 'ocupado' }),
     ).rejects.toThrow(ConflictException);
     expect(prisma.user.update).not.toHaveBeenCalled();
+  });
+
+  it('updateProfile salva a preferência do histórico separada das estatísticas', async () => {
+    const { users, prisma } = buildUsersService();
+    prisma.user.update.mockResolvedValue({ ...baseUser, recentWatchesPublic: true });
+
+    const profile = await users.updateProfile('user-1', { recentWatchesPublic: true });
+
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: { id: 'user-1' },
+      data: { recentWatchesPublic: true },
+      include: { oauthAccounts: true },
+    });
+    expect(profile.recentWatchesPublic).toBe(true);
+    expect(profile.statsPublic).toBe(true);
   });
 
   it('uploadAvatar rejeita buffer que não decodifica como imagem', async () => {

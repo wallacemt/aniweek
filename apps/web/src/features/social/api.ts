@@ -94,6 +94,14 @@ export interface PublicProfileDto {
     monthly: { label: string; count: number }[]
     statusBreakdown: { status: string; count: number }[]
   } | null
+  recentWatches: {
+    malId: number
+    title: string
+    imageUrl: string | null
+    completedAt: string
+    season: import('@aniweek/shared').Season
+    year: number
+  }[] | null
 }
 
 export const socialApi = {

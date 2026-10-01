@@ -2,11 +2,13 @@
 import { computed, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { Lock, UserMinus, UserPlus } from 'lucide-vue-next'
+import { Season } from '@aniweek/shared'
 import AppShell from '../../../components/AppShell.vue'
 import { HttpError } from '../../../lib/http'
 import { useAuthStore } from '../../../stores/auth'
 import { useToastStore } from '../../../stores/toast'
 import { socialApi, type PublicProfileDto } from '../api'
+import { seasonMeta } from '../../../lib/season-meta'
 
 const route = useRoute()
 const router = useRouter()
@@ -20,6 +22,16 @@ const followBusy = ref(false)
 
 const username = computed(() => route.params.username as string)
 const isSelf = computed(() => auth.user?.username === username.value)
+const recentWatchGroups = computed(() => {
+  const groups = new Map<string, { season: Season; year: number; items: NonNullable<PublicProfileDto['recentWatches']> }>()
+  for (const item of profile.value?.recentWatches ?? []) {
+    const key = `${item.season}-${item.year}`
+    const group = groups.get(key) ?? { season: item.season, year: item.year, items: [] }
+    group.items.push(item)
+    groups.set(key, group)
+  }
+  return [...groups.values()]
+})
 
 async function load() {
   loading.value = true
@@ -146,6 +158,41 @@ function avatarColor(seed: string): string {
         <div v-else class="glass flex items-center gap-3 rounded-[14px] px-5 py-4.5 text-[12.5px] text-(--ink-text-faint)">
           <Lock :size="14" />
           {{ isSelf ? 'Suas estatísticas estão ocultas do público (ver Perfil > Estatísticas públicas).' : 'Este usuário optou por não exibir as estatísticas.' }}
+        </div>
+
+        <section v-if="profile.recentWatches" class="glass rounded-[18px] p-5 sm:p-6">
+          <div class="mb-5">
+            <h2 class="font-display text-[16px] font-bold text-white">Assistidos recentemente</h2>
+            <p class="mt-1 text-[12px] text-(--ink-text-faint)">Seus últimos animes, organizados pela temporada em que assistiu.</p>
+          </div>
+          <p v-if="profile.recentWatches.length === 0" class="rounded-xl border border-white/8 bg-white/3 px-4 py-6 text-center text-[13px] text-(--ink-text-faint)">
+            Ainda não há animes assistidos para mostrar.
+          </p>
+          <div v-else class="flex flex-col gap-6">
+            <section v-for="group in recentWatchGroups" :key="`${group.season}-${group.year}`">
+              <h3 class="mb-3 flex items-center gap-2 text-[12px] font-semibold text-(--ink-text-muted)">
+                <span>{{ seasonMeta[group.season].emoji }}</span>
+                {{ seasonMeta[group.season].label }} {{ group.year }}
+                <span class="h-px flex-1 bg-white/8" />
+              </h3>
+              <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                <article v-for="anime in group.items" :key="anime.malId" class="flex min-w-0 items-center gap-3 rounded-xl border border-white/7 bg-white/3 p-2.5">
+                  <img v-if="anime.imageUrl" :src="anime.imageUrl" :alt="''" loading="lazy" class="h-[68px] w-12 flex-shrink-0 rounded-lg object-cover" />
+                  <div v-else class="h-[68px] w-12 flex-shrink-0 rounded-lg bg-white/6" />
+                  <div class="min-w-0">
+                    <div class="line-clamp-2 text-[13px] font-semibold text-white">{{ anime.title }}</div>
+                    <time class="mt-1 block text-[11px] text-(--ink-text-faint)" :datetime="anime.completedAt">
+                      {{ dateFormatter.format(new Date(anime.completedAt)) }}
+                    </time>
+                  </div>
+                </article>
+              </div>
+            </section>
+          </div>
+        </section>
+        <div v-else class="glass flex items-center gap-3 rounded-[14px] px-5 py-4.5 text-[12.5px] text-(--ink-text-faint)">
+          <Lock :size="14" />
+          {{ isSelf ? 'Seu histórico recente está oculto do público.' : 'Este usuário optou por não exibir o histórico recente.' }}
         </div>
       </div>
     </div>
