@@ -23,27 +23,32 @@ const faqs = [
 
 <template>
   <AppShell title="Ajuda" subtitle="Do primeiro anime à sua coleção">
-    <main class="mx-auto min-h-full max-w-4xl select-text bg-(--ink-bg)/95 px-4 py-6 sm:px-8 sm:py-10">
-      <h1 class="font-display text-2xl font-bold text-(--ink-text) sm:text-3xl">Como usar o AnimeWeek</h1>
-      <p class="mt-3 max-w-prose text-sm leading-7 text-(--ink-text-muted)">Organize o que quer assistir, acompanhe os episódios e guarde o que já terminou. Comece pelo calendário e volte aqui quando precisar.</p>
-      <nav aria-label="Tutoriais" class="my-6 flex flex-wrap gap-x-5 gap-y-3 border-y border-white/15 py-4 text-sm text-(--ink-text)">
-        <a v-for="item in tutorials" :key="item.id" :href="`#${item.id}`" class="underline underline-offset-4">{{ item.title }}</a>
-        <a href="#duvidas" class="underline underline-offset-4">Dúvidas frequentes</a>
-      </nav>
-      <section v-for="item in tutorials" :id="item.id" :key="item.id" class="scroll-mt-6 pb-8">
+    <main class="mx-auto min-h-full max-w-4xl select-text px-4 py-6 sm:px-8 sm:py-10">
+      <div class="glass glass-strong rounded-2xl p-5 sm:p-8">
+        <h1 class="font-display text-2xl font-bold text-(--ink-text) sm:text-3xl">Como usar o AnimeWeek</h1>
+        <p class="mt-3 max-w-prose text-sm leading-7 text-(--ink-text-muted)">Organize o que quer assistir, acompanhe os episódios e guarde o que já terminou. Comece pelo calendário e volte aqui quando precisar.</p>
+        <nav aria-label="Tutoriais" class="mt-5 flex flex-wrap gap-2 text-sm">
+          <a v-for="item in tutorials" :key="item.id" :href="`#${item.id}`" class="glass rounded-full px-3.5 py-1.5 text-(--ink-text) hover:border-white/30">{{ item.title }}</a>
+          <a href="#duvidas" class="glass rounded-full px-3.5 py-1.5 text-(--ink-text) hover:border-white/30">Dúvidas frequentes</a>
+        </nav>
+      </div>
+
+      <section v-for="item in tutorials" :id="item.id" :key="item.id" class="glass mt-5 scroll-mt-6 rounded-2xl p-5 sm:p-8">
         <h2 class="font-display text-lg font-bold text-(--ink-text)">{{ item.title }}</h2>
         <ol class="mt-3 max-w-prose list-decimal space-y-3 pl-5 text-sm leading-7 text-(--ink-text-muted)">
           <li v-for="step in item.steps" :key="step">{{ step }}</li>
         </ol>
       </section>
-      <section id="duvidas" class="scroll-mt-6">
+
+      <section id="duvidas" class="glass mt-5 scroll-mt-6 rounded-2xl p-5 sm:p-8">
         <h2 class="mb-4 font-display text-xl font-bold text-(--ink-text)">Dúvidas frequentes</h2>
-        <details v-for="faq in faqs" :key="faq.question" class="border-b border-white/15 py-4">
+        <details v-for="faq in faqs" :key="faq.question" class="border-b border-white/10 py-4 last:border-b-0">
           <summary class="cursor-pointer text-sm font-semibold leading-6 text-(--ink-text)">{{ faq.question }}</summary>
           <p class="mt-3 max-w-prose text-sm leading-7 text-(--ink-text-muted)">{{ faq.answer }}</p>
         </details>
       </section>
-      <RouterLink :to="{ name: 'home' }" class="mt-8 inline-block rounded-lg bg-(--brand-secondary) px-4 py-2.5 text-sm font-semibold text-white">Ir para meu calendário</RouterLink>
+
+      <RouterLink :to="{ name: 'home' }" class="mt-6 inline-block rounded-lg bg-(--brand-secondary) px-4 py-2.5 text-sm font-semibold text-white">Ir para meu calendário</RouterLink>
     </main>
   </AppShell>
 </template>

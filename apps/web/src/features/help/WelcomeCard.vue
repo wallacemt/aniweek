@@ -19,7 +19,7 @@ function dismiss() {
 </script>
 
 <template>
-  <section v-if="visible" aria-labelledby="welcome-title" class="relative mx-3 mt-3 shrink-0 rounded-xl border border-white/15 bg-(--ink-bg)/95 p-4 sm:mx-6 sm:mt-5 sm:p-5">
+  <section v-if="visible" aria-labelledby="welcome-title" class="glass glass-strong relative mx-3 mt-3 shrink-0 rounded-2xl p-4 sm:mx-6 sm:mt-5 sm:p-5">
     <button type="button" v-tooltip="'Dispensar introdução'" class="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-lg text-(--ink-text-muted) hover:bg-white/10" @click="dismiss">
       <X :size="16" aria-hidden="true" />
     </button>
