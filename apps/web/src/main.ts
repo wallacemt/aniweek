@@ -7,6 +7,18 @@ import { tooltip } from './directives/tooltip'
 import { router } from './router'
 import { bindAuthRefreshHandler } from './stores/auth'
 
+if (import.meta.env.VITE_UMAMI_WEBSITE_ID) {
+  const script = document.createElement('script')
+  script.defer = true
+  script.src = import.meta.env.VITE_UMAMI_SCRIPT_URL || 'https://analytics.wallacedev.com.br/script.js'
+  script.dataset.websiteId = import.meta.env.VITE_UMAMI_WEBSITE_ID
+  script.dataset.domains = 'aniweek.wallacedev.com.br'
+  script.dataset.doNotTrack = 'true'
+  script.dataset.excludeSearch = 'true'
+  script.dataset.excludeHash = 'true'
+  document.head.append(script)
+}
+
 const pinia = createPinia()
 const app = createApp(App)
 

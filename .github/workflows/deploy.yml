@@ -51,8 +51,11 @@ jobs:
           context: .
           file: apps/web/Dockerfile
           push: true
+          # Set VITE_UMAMI_WEBSITE_ID as a public Actions variable after creating the Aniweek site in Umami.
           build-args: |
             VITE_API_URL=${{ secrets.VITE_API_URL }}
+            VITE_UMAMI_WEBSITE_ID=${{ vars.VITE_UMAMI_WEBSITE_ID }}
+            VITE_UMAMI_SCRIPT_URL=https://analytics.wallacedev.com.br/script.js
           tags: |
             ${{ env.WEB_IMAGE }}:latest
             ${{ env.WEB_IMAGE }}:${{ github.event.workflow_run.head_sha }}

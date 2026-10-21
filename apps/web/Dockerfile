@@ -21,6 +21,11 @@ RUN bun run --filter @aniweek/shared build
 ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
 
+ARG VITE_UMAMI_WEBSITE_ID
+ENV VITE_UMAMI_WEBSITE_ID=$VITE_UMAMI_WEBSITE_ID
+ARG VITE_UMAMI_SCRIPT_URL="https://analytics.wallacedev.com.br/script.js"
+ENV VITE_UMAMI_SCRIPT_URL=$VITE_UMAMI_SCRIPT_URL
+
 # VITE_ROBOTS_CONTENT também é substituição de build (vite faz %VITE_X%
 # -> valor no index.html na hora do build, não em runtime). Só esse
 # Dockerfile builda pra produção (deploy.yml só roda em push pra
