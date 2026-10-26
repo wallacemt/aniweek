@@ -36,6 +36,7 @@ export const envSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
   RESEND_API_KEY: z.string().min(1).optional(),
   RESEND_FROM_EMAIL: z.email().default('no-reply@aniweek.app'),
+  RESEND_REPLY_TO: z.email().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

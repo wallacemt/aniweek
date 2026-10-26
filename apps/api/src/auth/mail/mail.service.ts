@@ -12,12 +12,14 @@ export class MailService {
   private readonly logger = new Logger(MailService.name);
   private readonly resend: Resend | null;
   private readonly fromEmail: string;
+  private readonly replyTo?: string;
   private readonly frontendUrl: string;
 
   constructor(config: ConfigService<Env, true>) {
     const apiKey = config.get('RESEND_API_KEY', { infer: true });
     this.resend = apiKey ? new Resend(apiKey) : null;
     this.fromEmail = config.get('RESEND_FROM_EMAIL', { infer: true });
+    this.replyTo = config.get('RESEND_REPLY_TO', { infer: true });
     this.frontendUrl = config.get('FRONTEND_URL', { infer: true });
   }
 
@@ -50,6 +52,7 @@ export class MailService {
         to,
         subject,
         text,
+        ...(this.replyTo ? { replyTo: this.replyTo } : {}),
       });
     } catch (error) {
       this.logger.error(
